@@ -7,6 +7,7 @@ from hocam.forms import RegistirationForm, LoginForm, UpdateForm, NewForumPageFo
 from hocam.models import User, ForumPages
 from flask_login import login_user, logout_user, login_required, current_user
 from PIL import Image
+from hocam.errors import HttpException404
 
 
 @app.route("/")
@@ -93,10 +94,6 @@ def newforumpage():
         forumpage = ForumPages(topic=form.topic.data, 
                                description=form.description.data, 
                                user_id=current_user.id)
-           
-        generated_url = f'forumpage/{forumpage.topic}'
-        forumpage.url = generated_url
-        furl = forumpage.url
         db.session.add(forumpage)
         db.session.commit()
         flash("Topic Creation Succesfull!", "success")
@@ -104,9 +101,15 @@ def newforumpage():
         
     return render_template("newforumpage.html",form=form)
 
-for formpages in ForumPages.query:
-    @app.route("/<url>")
-    def createurl(url):
-        url = formpages.url
-        return "f"
+
+@app.route("/forumpage/<int:forumpage_id>")
+def show_forumpage(forumpage_id):
+    try:
+        forumpage = ForumPages.get_or_404(forumpage_id)
+        return render_template("forumpagelayout.html", forumpage=forumpage)
+    except HttpException404:
+        return render_template("404error.html")
+          
+        
+    
 

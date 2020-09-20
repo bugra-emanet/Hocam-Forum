@@ -1,6 +1,7 @@
 from hocam import db, login_manager
 from flask_login import UserMixin
 import datetime
+from hocam.errors import HttpException404
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -23,8 +24,12 @@ class ForumPages(db.Model, UserMixin):
     topic = db.Column(db.String(35), nullable=False, unique=True)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
     description = db.Column(db.Text, nullable=True)
-    url = db.Column(db.String(60), nullable=F‚alse, unique=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    
+    @classmethod
+    def get_or_404(cls, id):
+        forumpage = cls.query.get(id)
+        if not forumpage:
+            raise HttpException404
+        return forumpage
 
-
-db.create_all()
