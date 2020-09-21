@@ -3,6 +3,7 @@ from flask_login import UserMixin
 import datetime
 from hocam.errors import HttpException404
 
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -12,20 +13,26 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default="default.png")
+    image_file = db.Column(db.String(20), nullable=False,
+                           default="default.png")
     password = db.Column(db.String(60), nullable=False)
-    forumpages = db.relationship("ForumPages", backref="author", lazy=True)
+    forumpages = db.relationship("ForumPages", backref="creator", lazy=True)
+    posts = db.relationship("Posts", backref="author", lazy=True)
+
     def __repr__(self):
         return f"User ('{self.username}','{self.email} {self.image_file}')"
 
 
-class ForumPages(db.Model, UserMixin):
+class ForumPages(db.Model):
+    __tablename__ = "forumpages"
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.String(35), nullable=False, unique=True)
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
+    date_created = db.Column(db.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
     description = db.Column(db.Text, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    
+    posts = db.relationship("Posts", backref="topic_id", lazy=True)
+
     @classmethod
     def get_or_404(cls, id):
         forumpage = cls.query.get(id)
@@ -33,3 +40,17 @@ class ForumPages(db.Model, UserMixin):
             raise HttpException404
         return forumpage
 
+
+class Posts(db.Model):
+
+    __tablename__ = "posts"
+    id = db.Column(db.Integer, primary_key=True)
+    date_created = db.Column(db.DateTime, nullable=False,
+                             default=datetime.datetime.utcnow())
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    forumpage = db.Column(db.Integer, db.ForeignKey("forumpages.id"),
+                          nullable=False)
+
+
+db.create_all()

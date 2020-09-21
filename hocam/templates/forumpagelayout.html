@@ -1,0 +1,15 @@
+{%extends "layout.html"%} 
+{% block main %}
+<div class="container-fluid border rounded">
+  <form method="POST" action="">
+    {{form.hidden_tag()}}
+    <fieldset class="form-group">
+      <div class="form-group">
+        {{form.comment.label(class="form-control-label")}}
+        {{form.comment(class="form-control form-control")}}
+      </div>
+    </fieldset>
+    <div class="form-group">{{form.post(class="btn btn-outline-info")}}</div>
+  </form>
+</div>
+{% endblock main %}

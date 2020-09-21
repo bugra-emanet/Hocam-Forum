@@ -90,22 +90,25 @@
     </header>
 
     <main role="main" class="container">
+      {% block main %}
       <div class="row">
         <div class="col-md-8">
-          {% with messages = get_flashed_messages(with_categories=true) %} {% if
-          messages %} {% for category, message in messages %}
-          <div class="alert alert-{{ category }}">{{ message }}</div>
-          {% endfor %} {% endif %} {% endwith %} {% block main %} {% endblock
-          main %}
+          {% with messages = get_flashed_messages(with_categories=true) %}
+           {% if messages %}
+            {% for category, message in messages %}
+             <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+           {% endif %}
+          {% endwith %}
+          
+          
         </div>
+        {% endblock main %}
       </div>
     </main>
     <footer>
-      <nav style="background-color: black;" class="navbar navbar-expand-sm navbar-dark fixed-bottom">
-        <span class="navbar-text text-center mx-auto"
-          >©2020 Buğra Emanet,All Rights Reserved</span
-        >
-      </nav>
+      
+    
     </footer>
   </body>
 </html>
