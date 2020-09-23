@@ -2,11 +2,11 @@
 {% block main %}
 <h1 class="mt-2">Forum Links</h1>
 
-<div class="list-group">
+<div style="max-height: 36em;"class="list-group overflow-auto">
   {% if current_user.is_authenticated %}
-  <a href="{{url_for('newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark" role="button">Create New Topic 	&#43;</a>
+  <a href="{{url_for('newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark sticky-top bg-blue" role="button">Create New Topic 	&#43;</a>
   {% else %}
-  <a href="{{url_for('newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark disabled" role="button">Create New Topic 	&#43;</a>
+  <a href="{{url_for('newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark sticky-top disabled bg-blue" role="button">Create New Topic 	&#43;</a>
   {% endif %}
   
   {% if truth %}

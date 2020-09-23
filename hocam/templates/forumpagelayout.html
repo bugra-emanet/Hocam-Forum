@@ -1,15 +1,47 @@
-{%extends "layout.html"%} 
+{%extends "layout.html"%}
 {% block main %}
-<div class="container-fluid border rounded">
-  <form method="POST" action="">
-    {{form.hidden_tag()}}
-    <fieldset class="form-group">
-      <div class="form-group">
-        {{form.comment.label(class="form-control-label")}}
-        {{form.comment(class="form-control form-control")}}
-      </div>
-    </fieldset>
-    <div class="form-group">{{form.post(class="btn btn-outline-info")}}</div>
-  </form>
+<div class="row mt-5">
+  <div class="col-8">
+    <ul class="list-group">
+    {% if forumpage.description %}
+    <div class="d-inline">
+      <small>
+       <img style ="max-height: 2em;"class = "image-fluid rounded-circle"src="../static/profile_pics/{{user.image_file}}" alt="user pic">
+       <label class="border-bottom" for="description"> Posted by {{user.username}} at {{localizetime(forumpage.date_created)}} :</label>
+      </small>
+    </div>
+    <li class="list-group-item">
+     <p id="description">{{forumpage.description}}</p>
+    </li>
+    {% endif %}
+    {% for post in forumpage.posts %}
+    <div class="d-inline">
+      <small>
+       <img style ="max-height: 2em;"class = "image-fluid rounded-circle"src="../static/profile_pics/{{userdatabase.get(post.user_id).image_file}}" alt="user pic">
+       <label class="border-bottom" for="post{{post.id}}"> Posted by {{userdatabase.get(post.user_id).username}} at {{localizetime(post.date_created)}} :</label>
+      </small>
+    </div>
+    <li class="list-group-item">
+     <p id="post{{post.id}}">{{post.content}}</p>
+     </li>
+
+    
+    {% endfor %}
+  </ul>
+  </div>
+  <div class="col-4 ">
+    <div class="container-fluid border rounded">
+      <form method="POST" action="">
+        {{form.hidden_tag()}}
+        <fieldset class="form-group">
+          <div class="form-group">
+            {{form.comment.label(class="form-control-label")}}
+            {{form.comment(class="form-control form-control")}}
+          </div>
+        </fieldset>
+        <div class="form-group">{{form.post(class="btn btn-outline-info")}}</div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock main %}

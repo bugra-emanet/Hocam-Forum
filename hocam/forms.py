@@ -66,5 +66,6 @@ class NewForumPageForm(FlaskForm, ModelForm):
 
 
 class NewPostForm(FlaskForm):
-    comment = TextAreaField("Comment")
+    comment = TextAreaField("Comment", validators=[DataRequired(),
+                                                   Length(min=1, max=300)])
     post = SubmitField("Post")

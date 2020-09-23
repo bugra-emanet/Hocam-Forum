@@ -1,4 +1,6 @@
 .bg-black{
-    background-color: black;
+    background-color: black !important;
 }
-
+.bg-blue{
+    background-color:#80ABEB !important;
+}

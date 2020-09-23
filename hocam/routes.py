@@ -1,4 +1,5 @@
 import pandas as pd
+import pytz
 import secrets
 import os
 from hocam import app, db, bcrypt
@@ -8,11 +9,10 @@ from hocam.forms import (RegistirationForm, LoginForm,
                          UpdateForm,
                          NewForumPageForm,
                          NewPostForm)
-from hocam.models import User, ForumPages
+from hocam.models import User, ForumPages, Posts
 from flask_login import (login_user, logout_user,
                          login_required, current_user)
 from PIL import Image
-from hocam.errors import HttpException404
 
 
 @app.route("/")
@@ -121,18 +121,43 @@ def newforumpage():
         db.session.add(forumpage)
         db.session.commit()
         flash("Topic Creation Succesfull!", "success")
-        return redirect(url_for("show_forumpage",
+        return redirect(url_for("showforumpage",
                         forumpage_id=forumpage.query.filter_by
                         (topic=form.topic.data).first().id))
     return render_template("newforumpage.html", form=form)
 
 
 @app.route("/forumpage/<int:forumpage_id>", methods=["GET", "POST"])
-def show_forumpage(forumpage_id):
-    try:
-        form = NewPostForm()
-        forumpage = ForumPages.get_or_404(forumpage_id)
-        return render_template("forumpagelayout.html", forumpage=forumpage,
-                               form=form)
-    except HttpException404:
-        return render_template("404error.html")
+def showforumpage(forumpage_id):
+
+    form = NewPostForm()
+    forumpage = ForumPages.query.get_or_404(forumpage_id,
+                                            description="No such page!")
+    user = forumpage.user_id
+    user = User.query.get(user)
+    userdatabase = User.query
+    if form.validate_on_submit():
+        post = Posts(content=form.comment.data, user_id=current_user.id,
+                     forumpage=forumpage_id)
+        db.session.add(post)
+        db.session.commit()
+        flash("Posted", "success")
+
+    def localizetime(utctime):
+        utctime = utctime.replace(tzinfo=pytz.UTC)
+        localtime = utctime.astimezone(pytz.timezone("ASIA/ISTANBUL"))
+        localtime = localtime.strftime("%d/%b/%y %X ")
+        return localtime
+    return render_template("forumpagelayout.html", forumpage=forumpage,
+                           form=form, user=user, title=forumpage.topic,
+                           userdatabase=userdatabase,
+                           localizetime=localizetime)
+
+
+"""forumpage.description √
+forumpage.topic √
+forumpage.posts > list of post objects
+forumpage.user_id √
+forumpage.date_created √
+"""
+# values i will use in tht template

@@ -7,7 +7,12 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    
+    <!-- Custom Css -->
+    <link
+      href="../static/stylesheet.css"
+      
+      rel="stylesheet"
+    />
     
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then bootstrap JS -->
@@ -42,9 +47,9 @@
   </head>
   <body>
     <header>
-      <nav style="background-color: black;" class="navbar navbar-expand-md navbar-dark">
+      <nav  class="navbar navbar-expand-md navbar-dark bg-black">
         <!-- Brand -->
-        <a class="navbar-brand" href="#"
+        <a class="navbar-brand" href="{{url_for('home')}}"
           ><img
             src="../static/logos/metulogodark.png"
             class="rounded-circle image-fluid"
@@ -79,9 +84,7 @@
               <a class="nav-link active" href="{{url_for('login')}}">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="{{url_for('signup')}}"
-                >Sign up</a
-              >
+              <a class="nav-link active" href="{{url_for('signup')}}">Sign up</a>
             </li>
             {% endif %}
           </ul>
@@ -90,8 +93,7 @@
     </header>
 
     <main role="main" class="container">
-      {% block main %}
-      <div class="row">
+      <div class="row mt-2">
         <div class="col-md-8">
           {% with messages = get_flashed_messages(with_categories=true) %}
            {% if messages %}
@@ -100,15 +102,12 @@
             {% endfor %}
            {% endif %}
           {% endwith %}
-          
-          
         </div>
-        {% endblock main %}
       </div>
+      {% block main %}
+      {% endblock main %}
     </main>
     <footer>
-      
-    
     </footer>
   </body>
 </html>
