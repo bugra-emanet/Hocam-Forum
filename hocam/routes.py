@@ -1,43 +1,33 @@
-import pandas as pd
-import pytz
-import secrets
 import os
+import datetime
 from hocam import app, db, bcrypt
+from hocam.functions import (localizetime, save_picture,
+                             generate_token, confirm_token, send_mail)
 from flask import (render_template, flash, redirect,
-                   url_for, request)
+                   url_for, request, abort)
 from hocam.forms import (RegistirationForm, LoginForm,
-                         UpdateForm,
-                         NewForumPageForm,
-                         NewPostForm)
+                         UpdateForm, NewForumPageForm,
+                         PostForm, ResendConformationForm)
 from hocam.models import User, ForumPages, Posts
 from flask_login import (login_user, logout_user,
                          login_required, current_user)
-from PIL import Image
 
 
 @app.route("/")
+@app.route("/home")
 def home():
-    topics = ForumPages.query.all()
-    urls = ForumPages.query.all()
-    topics = [forumpages.topic for forumpages in topics]
-    urls = [forumpages.id for forumpages in urls]
-    urls = [f"{url_for('home')}forumpage/{url}" for url in urls]
-    values = pd.DataFrame()
-    values["topic"] = topics
-    values["url"] = urls
-    values = values[["topic", "url"]]
-    values = list(values.itertuples(index=False, name=None))
-    if len(values) == 0:
-        truth = False
-    else:
-        truth = True
-
-    return render_template("index.html", values=values, truth=truth)
+    forumpages = ForumPages.query.order_by(ForumPages.date_created.desc())
+    forumpages = forumpages.all()
+    return render_template("index.html", forumpages=forumpages,
+                           localizetime=localizetime)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
+    if current_user.is_authenticated:
+        return redirect(url_for("home"))
+
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password,
@@ -63,6 +53,18 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash("Your account has been created!", "success")
+        token = generate_token(user.email)
+        confirm_url = url_for("confirm_email", token=token, _external=True)
+        template = render_template('message_activate.html',
+                                   confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_mail(recipients=user.email,
+                  subject=subject,
+                  template=template,
+                  sender=app.config["MAIL_DEFAULT_SENDER"])
+        login_user(user)
+        flash('A confirmation email has been sent via email.', 'success')
+        logout_user()
         return redirect(url_for("login"))
     return render_template("signup.html", title="Sign up!",
                            form=form)
@@ -73,19 +75,6 @@ def signup():
 def logout():
     logout_user()
     return redirect(url_for("home"))
-
-
-def save_picture(form_picture):
-    random_hex = secrets.token_hex(8)
-    _, f_ext = os.path.splitext(form_picture.filename)
-    picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, "static/profile_pics",
-                                picture_fn)
-    output_size = (125, 125)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)
-    return picture_fn
 
 
 @app.route("/profile", methods=["GET", "POST"])
@@ -117,6 +106,8 @@ def newforumpage():
     if form.validate_on_submit():
         forumpage = ForumPages(topic=form.topic.data,
                                description=form.description.data,
+                               date_created=datetime.datetime.now(
+                                            datetime.timezone.utc),
                                user_id=current_user.id)
         db.session.add(forumpage)
         db.session.commit()
@@ -129,35 +120,104 @@ def newforumpage():
 
 @app.route("/forumpage/<int:forumpage_id>", methods=["GET", "POST"])
 def showforumpage(forumpage_id):
-
-    form = NewPostForm()
+    form = PostForm()
     forumpage = ForumPages.query.get_or_404(forumpage_id,
                                             description="No such page!")
-    user = forumpage.user_id
-    user = User.query.get(user)
-    userdatabase = User.query
     if form.validate_on_submit():
         post = Posts(content=form.comment.data, user_id=current_user.id,
+                     date_created=datetime.datetime.now(
+                                  datetime.timezone.utc),
                      forumpage=forumpage_id)
         db.session.add(post)
         db.session.commit()
         flash("Posted", "success")
-
-    def localizetime(utctime):
-        utctime = utctime.replace(tzinfo=pytz.UTC)
-        localtime = utctime.astimezone(pytz.timezone("ASIA/ISTANBUL"))
-        localtime = localtime.strftime("%d/%b/%y %X ")
-        return localtime
+        return redirect(url_for('showforumpage', forumpage_id=forumpage.id))
+    page = request.args.get("page", 1, type=int)
+    posts = Posts.query.filter_by(forumpage=forumpage.id)
+    posts = posts.order_by(Posts.date_created.desc())
+    posts = posts.paginate(page=page, per_page=5)
     return render_template("forumpagelayout.html", forumpage=forumpage,
-                           form=form, user=user, title=forumpage.topic,
-                           userdatabase=userdatabase,
+                           form=form, title=forumpage.topic, posts=posts,
                            localizetime=localizetime)
 
 
-"""forumpage.description √
-forumpage.topic √
-forumpage.posts > list of post objects
-forumpage.user_id √
-forumpage.date_created √
-"""
-# values i will use in tht template
+@login_required
+@app.route("/forumpage/<int:forumpage_id>/post/<int:post_id>/edit",
+           methods=["GET", "POST"])
+def editpost(forumpage_id, post_id):
+    form = PostForm()
+    post = Posts.query.get_or_404(post_id)
+    forumpage = ForumPages.query.get_or_404(forumpage_id,
+                                            description="No such page!")
+    if forumpage_id != post.forumpage:
+        abort(404)
+    if post.author != current_user:
+        abort(403)
+
+    if form.validate_on_submit():
+        post.content = form.comment.data
+        db.session.commit()
+        flash("Your post has been edited!", "success")
+        return redirect(url_for("showforumpage", forumpage_id=forumpage.id))
+    elif request.method == "GET":
+        form.comment.data = post.content
+    page = request.args.get("page", 1, type=int)
+    posts = Posts.query.filter_by(forumpage=forumpage.id)
+    posts = posts.order_by(Posts.date_created.desc())
+    posts = posts.paginate(page=page, per_page=5)
+    return render_template("editforumpagelayout.html", forumpage=forumpage,
+                           form=form, title=forumpage.topic, posts=posts,
+                           localizetime=localizetime)
+
+
+@login_required
+@app.route("/forumpage/<int:forumpage_id>/post/<int:post_id>/delete",
+           methods=["POST"])
+def delete_post(forumpage_id, post_id):
+    post = Posts.query.get_or_404(post_id)
+    if forumpage_id != post.forumpage:
+        abort(404)
+    if post.author != current_user:
+        abort(403)
+    forumpage = post.forumpage
+    db.session.delete(post)
+    db.session.commit()
+    flash("Your post has been deleted!", "success")
+    return redirect(url_for("showforumpage", forumpage_id=forumpage))
+
+
+@app.route('/confirm/<token>')
+@login_required
+def confirm_email(token):
+    email = confirm_token(token)
+    user = User.query.filter_by(email=email).first_or_404()
+    if user.confirmed:
+        flash('Account already confirmed. Please login.', 'success')
+    if not confirm_token(token):
+        flash('The confirmation link is invalid or has expired.', 'danger')
+    else:
+        user.confirmed = True
+        user.confirmed_on = datetime.datetime.now()
+        db.session.commit()
+        flash('You have confirmed your account. Thanks!', 'success')
+    return redirect(url_for('home'))
+
+
+@login_required
+@app.route("/resendconformation", methods=["GET", "POST"])
+def resend_conformation():
+    form = ResendConformationForm()
+    form.email.data = current_user.email
+    if form.validate_on_submit():
+        token = generate_token(form.email.data)
+        confirm_url = url_for("confirm_email", token=token, _external=True)
+        template = render_template('message_activate.html',
+                                   confirm_url=confirm_url)
+        subject = "Please confirm your email"
+        send_mail(recipients=current_user.email,
+                  subject=subject,
+                  template=template,
+                  sender=app.config["MAIL_DEFAULT_SENDER"])
+        flash('A confirmation email has been sent via email.', 'success')
+    return render_template("resendconformation.html", form=form,
+                           title="resendconformation")

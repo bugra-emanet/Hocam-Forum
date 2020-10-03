@@ -1,45 +1,41 @@
 {%extends "layout.html"%}
 {% block main %}
 <div class="container-md mt-5 border border-dark rounded-lg shadow">
-    <form method="POST" action="">
-      {{form.hidden_tag()}}
-      <fieldset class="form-group">
-        <legend >Create New Topic</legend>
-        <div class="form-group">
-          {{form.topic.label(class="form-control-label")}}
-          {% if form.topic.errors %}
-          {{form.topic(class="form-control form-control-lg is-invalid")}}
-            <div class="invalid-feedback">
-            {% for error in form.topic.errors %} 
-            
-             <span>{{ error }}</span>
-            {% endfor %} 
-            </div>
-          {%else%}
-          {{form.topic(class="form-control form-control")}}
-          {% endif %}
+  <form method="POST" action="">
+    {{form.hidden_tag()}}
+    <fieldset class="form-group">
+      <legend>Create New Topic</legend>
+      <div class="form-group">
+        {{form.topic.label(class="form-control-label")}}
+        {% if form.topic.errors %}
+        {{form.topic(class="form-control form-control-lg is-invalid")}}
+        <div class="invalid-feedback">
+          {% for error in form.topic.errors %}
+
+          <span>{{ error }}</span>
+          {% endfor %}
         </div>
-        <div class="form-group">
-          {{form.description.label(class="form-control-label")}}
-          {% if form.description.errors %}
-          {{form.description(class="form-control form-control-lg is-invalid")}}
-            <div class="invalid-feedback">
-            {% for error in form.description.errors %} 
-            
-             <span>{{ error }}</span>
-            {% endfor %} 
-            </div>
-          {%else%}
-          {{form.description(class="form-control form-control")}}
-          {% endif %}
+        {%else%}
+        {{form.topic(class="form-control form-control")}}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{form.description.label(class="form-control-label")}}
+        {% if form.description.errors %}
+        {{form.description(class="form-control form-control-lg is-invalid")}}
+        <div class="invalid-feedback">
+          {% for error in form.description.errors %}
+
+          <span>{{ error }}</span>
+          {% endfor %}
         </div>
-        <div class="form-check">
-          {{form.private(class="form-check-input")}}
-          {{form.private.label(class="form-check-label")}}
-        </div>
-      </fieldset>
-      <div class="form-group">{{form.submit(class="btn btn-outline-info")}}</div>
-    </form>
-  </div>
-    
+        {%else%}
+        {{form.description(class="form-control form-control")}}
+        {% endif %}
+      </div>
+    </fieldset>
+    <div class="form-group">{{form.submit(class="btn btn-outline-info")}}</div>
+  </form>
+</div>
+
 {% endblock main %}

@@ -1,12 +1,8 @@
-{%extends "layout.html"%} {% block main %}
+{%extends "layout.html"%}
+{% block main %}
 <div class="container mt-5 rounded border">
   <div class="media">
-    <img
-      style="max-height: 4em"
-      class="mr-3"
-      src="{{image_file}}"
-      alt="Generic placeholder image"
-    />
+    <img style="max-height: 4em" class="mr-3" src="{{image_file}}" alt="Generic placeholder image" />
     <div class="media-body">
       <h5 class="mt-0">{{current_user.username}}</h5>
       <p class="text-secondary">{{current_user.email}}</p>
@@ -20,24 +16,24 @@
             {% if form.username.errors %}
             {{form.username(class="form-control form-control-lg is-invalid")}}
             <div class="invalid-feedback">
-            {% for error in form.username.errors %} 
-          
-             <span>{{ error }}</span>
-             {% endfor %} 
-             </div>
-             {%else%}
-             {{form.username(class="form-control form-control")}}
-             {% endif %}
+              {% for error in form.username.errors %}
+
+              <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+            {%else%}
+            {{form.username(class="form-control form-control")}}
+            {% endif %}
           </div>
           <div class="form-group">
             {{form.image.label()}}
             {{form.image(class="form-control-file")}}
             {% if form.image.errors %}
-             {% for error in form.image.errors %}
-               <span class="text-danger">{{error}}</span><br/>
-              
-             {% endfor %}
-              
+            {% for error in form.image.errors %}
+            <span class="text-danger">{{error}}</span><br />
+
+            {% endfor %}
+
             {% endif %}
           </div>
         </fieldset>

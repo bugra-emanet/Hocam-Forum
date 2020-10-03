@@ -4,7 +4,7 @@ from flask_login import current_user
 from wtforms import (StringField, PasswordField,
                      SubmitField, BooleanField, TextAreaField, ValidationError)
 from wtforms.validators import (DataRequired, Length,
-                                Email, EqualTo, Regexp)
+                                EqualTo, Regexp)
 from hocam.models import User, ForumPages
 from wtforms_alchemy import Unique, ModelForm
 import re
@@ -34,7 +34,9 @@ class RegistirationForm(FlaskForm, ModelForm):
 
 class LoginForm(FlaskForm, ModelForm):
     email = StringField("Email",
-                        validators=[DataRequired(), Email()])
+                        validators=[DataRequired(), Regexp(metumail_validator,
+                                    message="Please enter a valid Metu Mail.")]
+                        )
     password = PasswordField("Password",
                              validators=[DataRequired()])
     remember = BooleanField("Remember Me")
@@ -60,12 +62,20 @@ class NewForumPageForm(FlaskForm, ModelForm):
     topic = StringField("Topic", validators=[DataRequired(),
                                              Length(min=5, max=35),
                                              Unique(ForumPages.topic)])
-    private = BooleanField("Private")
+# private = BooleanField("Private")
     description = TextAreaField("Description")
     submit = SubmitField("Create")
 
 
-class NewPostForm(FlaskForm):
+class PostForm(FlaskForm):
     comment = TextAreaField("Comment", validators=[DataRequired(),
                                                    Length(min=1, max=300)])
     post = SubmitField("Post")
+
+
+class ResendConformationForm(FlaskForm, ModelForm):
+    email = StringField("Email",
+                        validators=[DataRequired(), Regexp(metumail_validator,
+                                    message="Please enter a valid Metu Mail.")]
+                        )
+    submit = SubmitField("Resend")

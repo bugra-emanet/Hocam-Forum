@@ -91,7 +91,7 @@
       <div class="d-inline">
         <small>
           <img style="max-height: 2em;" class="image-fluid rounded-circle"
-            src="{{url_for('static',filename='profile_pics/' +post.author.image_file)}}" alt="user pic">
+            src="{{url_for('static',filename='profile_pics/' + post.author.image_file)}}" alt="user pic">
           <label class="border-bottom" for="post{{post.id}}"> <b class="text-info">Posted</b> by
             {{post.author.username}} at
             {{localizetime(post.date_created)}} :</label>
@@ -105,50 +105,21 @@
           max-height: 3em;">{{post.content}}</p>
           
         </div>
-        {% if post.author == current_user %}
-          
-       
-        <div class="justify-content-start list-group list-group-horizontal-sm">
-          <a class="btn btn-sm btn-primary" href="{{url_for('editpost',post_id = post.id, forumpage_id = forumpage.id)}}" class="list-group-item ">
-            Edit
-          </a>
-          <button type="button" class="btn btn-sm btn-danger ml-2" data-toggle="modal" data-target="#deleteModal">
-            Delete
-          </button>
-          <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel">Delete Post</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <form action="{{url_for('delete_post', forumpage_id = post.forumpage ,post_id = post.id)}}" method="POST">
-                    <input type="submit" class="btn btn-danger" value="Delete">
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-       
-        
-        {% endif %}
+   
       </li>
      
 
       {% endfor %}
     </ul>
-    {% if current_user.is_authenticated and current_user.confirmed%}
+  
+    {% if current_user.is_authenticated %}
 
 
     <div class="container mt-2">
       <form method="POST" action="">
         {{form.hidden_tag()}}
         <fieldset class="form-group">
+            <legend>Edit Your Post</legend>
           <div class="form-group">
             {{form.comment.label(class="form-control-label")}}
             {% if form.comment.errors %}

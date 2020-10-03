@@ -14,12 +14,18 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False,
                            default="default.png")
+    registered_on = db.Column(db.DateTime, nullable=False,
+                              default=datetime.datetime.now(
+                                datetime.timezone.utc))
+    admin = db.Column(db.Boolean, nullable=False, default=False)
     password = db.Column(db.String(60), nullable=False)
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    confirmed_on = db.Column(db.DateTime, nullable=True)
     forumpages = db.relationship("ForumPages", backref="creator", lazy=True)
     posts = db.relationship("Posts", backref="author", lazy=True)
 
     def __repr__(self):
-        return f"User ('{self.username}','{self.email} {self.image_file}')"
+        return f"User ({self.username}, {self.email}, {self.image_file})"
 
 
 class ForumPages(db.Model):
