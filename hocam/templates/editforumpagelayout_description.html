@@ -1,0 +1,202 @@
+{%extends "layout.html"%}
+{% block main %}
+</div>
+
+
+
+
+<br>
+
+<div class="ml-3">
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-sm justify-content-end">
+      {% if posts.has_prev%}
+      <li class="page-item "><a area-label="Previous" class="page-link "
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+            aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span></a></li>
+      {% else %}
+      <li class="page-item disabled"><a area-label="Previous" class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+            aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span></a></li>
+      {% endif %}
+
+     
+      {% for page_num in posts.iter_pages(left_edge=1,right_edge=1,left_current=0,right_current=1)  %}
+      {% if page_num%}
+      {% if posts.page == page_num %}
+      <li class="page-item active"><a class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+      {% else %}
+      <li class="page-item"><a class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+      {% endif %}
+
+
+
+
+      {% else %}
+      ...
+      {% endif %}
+      {% endfor %}
+     
+
+      {% if posts.has_next%}
+      <li class="page-item"><a aria-label="Previous" class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+            aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span></a></li>
+      {%else%}
+      <li class="page-item disabled"><a aria-label="Next" class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+            aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span></a></li>
+      {%endif%}
+    </ul>
+  </nav>
+
+  {% if not posts.total %}
+     
+  <div class="container">
+    <h4>Looks like this topic is empty!</h4>
+    <h6>Be the first one to comment.</h6>
+  </div>
+
+  {% endif %}
+</div>
+<div class="row mt-5">
+  <div  class="col-12">
+    <ul class="list-group">
+      {% if forumpage.description and posts.page == 1 %}
+      <div class="d-inline">
+        <small>
+          <img style="max-height: 2em;" class="image-fluid rounded-circle"
+            src="{{url_for('static' ,filename='profile_pics/' + forumpage.creator.image_file)}}" alt="user pic">
+          <label class="border-bottom" for="description"> <b class="text-danger">Description</b> by
+            {{forumpage.creator.username}} at
+            {{localizetime(forumpage.date_created)}} :</label>
+        </small>
+      </div>
+      <div class="overflow-auto">
+      <li class="border-0  list-group-item">
+        <p id="description">{{forumpage.description}}</p>
+      </li>
+    </div>
+      {% endif %}
+      {% for post in posts.items %}
+      
+        
+      </form>
+      <div class="d-inline">
+        <small>
+          <img style="max-height: 2em;" class="image-fluid rounded-circle"
+            src="{{url_for('static',filename='profile_pics/' + post.author.image_file)}}" alt="user pic">
+          <label class="border-bottom" for="post{{post.id}}"> <b class="text-info">Posted</b> by
+            {{post.author.username}} at
+            {{localizetime(post.date_created)}} :</label>
+            
+        </small>
+      </div>
+      
+      <li  class="border-0 list-group-item">
+        <div  class="overflow-auto">
+          <p style="white-space: pre;
+          max-height: 3em;">{{post.content}}</p>
+          
+        </div>
+   
+      </li>
+     
+
+      {% endfor %}
+    </ul>
+  
+    {% if current_user.is_authenticated %}
+
+
+    <div class="container mt-2">
+      <form method="POST" action="">
+        {{form.hidden_tag()}}
+        <fieldset class="form-group">
+            <legend>Edit Your Description</legend>
+          <div class="form-group">
+            {{form.comment.label(class="form-control-label")}}
+            {% if form.comment.errors %}
+            {{form.comment(class="form-control form-control-lg is-invalid")}}
+              <div class="invalid-feedback">
+              {% for error in form.comment.errors %} 
+              
+               <span>{{ error }}</span>
+              {% endfor %} 
+              </div>
+            {%else%}
+            {{form.comment(class="form-control form-control")}}
+            {% endif %}
+          </div>
+          
+           
+        </fieldset>
+        <div class="form-group">{{form.post(class="btn btn-outline-info")}}</div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+
+
+
+<br>
+
+<div class="ml-3">
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-sm justify-content-end">
+      {% if posts.has_prev%}
+      <li class="page-item "><a area-label="Previous" class="page-link "
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+            aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span></a></li>
+      {% else %}
+      <li class="page-item disabled"><a area-label="Previous" class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+            aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span></a></li>
+      {% endif %}
+
+
+      {% for page_num in posts.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2)  %}
+      {% if page_num%}
+      {% if posts.page == page_num %}
+      <li class="page-item active"><a class="page-link  "
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+      {% else %}
+      <li class="page-item"><a class="page-link "
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+      {% endif %}
+
+
+
+
+      {% else %}
+      ...
+      {% endif %}
+      {% endfor %}
+      {% if posts.has_next %}
+      <li class="page-item"><a aria-label="Next" class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+            aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Previous</span></a></li>
+      {%else%}
+      <li class="page-item disabled"><a aria-label="Next" class="page-link"
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+            aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span></a></li>
+      {%endif%}
+    </ul>
+  </nav>
+
+
+</div>
+
+{% endblock main %}
