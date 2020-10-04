@@ -24,3 +24,4 @@ app.config["MAIL_PASSWORD"] = os.environ.get("GMAIL_PASSWORD")
 app.config["SECURITY_PASSWORD_SALT"] = os.environ.get("SECURITY_PASSWORD_SALT")
 app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("GMAIL_USERNAME")
 mail = Mail(app)
+from hocam import routes

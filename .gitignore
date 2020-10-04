@@ -3,3 +3,7 @@ __pycache__
 .vscode
 hocam/site.db
 *.pyc
+*.png
+*.jpg
+*.json
+*.pdf

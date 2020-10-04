@@ -3,7 +3,7 @@
 
 <div style="max-height: 36em;" class="list-group overflow-auto">
   {% if current_user.is_authenticated and not current_user.confirmed%}
-  <a class="btn btn-basic btn-sm btn-outline-dark bg-blue"href="{{url_for('resend_conformation')}}">Resend email confirmation link</a>
+  <a class="btn btn-basic btn-sm btn-outline-dark bg-blue"href="{{url_for('resend_confirmation')}}">Resend email confirmation link</a>
   {% endif%}
   {% if current_user.is_authenticated and current_user.confirmed%}
   <a href="{{url_for('newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark sticky-top bg-blue"

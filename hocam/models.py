@@ -1,15 +1,17 @@
 from hocam import db, login_manager
 from flask_login import UserMixin
 import datetime
+import uuid
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User.query.get(user_id)
 
 
 class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column('id', db.Text(length=36), default=lambda: str(uuid.uuid4()),
+                   primary_key=True)
     username = db.Column(db.String(15), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False,
@@ -29,8 +31,11 @@ class User(db.Model, UserMixin):
 
 
 class ForumPages(db.Model):
+
     __tablename__ = "forumpages"
-    id = db.Column(db.Integer, primary_key=True)
+
+    id = db.Column('id', db.Text(length=36), default=lambda: str(uuid.uuid4()),
+                   primary_key=True)
     topic = db.Column(db.String(35), nullable=False, unique=True)
     date_created = db.Column(db.DateTime, nullable=False,
                              default=datetime.datetime.now(
@@ -39,11 +44,17 @@ class ForumPages(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     posts = db.relationship("Posts", backref="topic_id", lazy=True)
 
+    def __repr__(self):
+        return (f"Forumpage ({self.topic}, {self.creator.username},"
+                f"{self.creator.email})")
+
 
 class Posts(db.Model):
 
     __tablename__ = "posts"
-    id = db.Column(db.Integer, primary_key=True)
+
+    id = db.Column('id', db.Text(length=36), default=lambda: str(uuid.uuid4()),
+                   primary_key=True)
     date_created = db.Column(db.DateTime, nullable=False,
                              default=datetime.datetime.now(
                                  datetime.timezone.utc))
@@ -51,6 +62,9 @@ class Posts(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     forumpage = db.Column(db.Integer, db.ForeignKey("forumpages.id"),
                           nullable=False)
+
+    def __repr__(self):
+        return f"Post ( {self.author.username}, {self.author.email})"
 
 
 db.create_all()

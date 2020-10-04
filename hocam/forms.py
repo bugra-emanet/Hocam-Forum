@@ -62,7 +62,6 @@ class NewForumPageForm(FlaskForm, ModelForm):
     topic = StringField("Topic", validators=[DataRequired(),
                                              Length(min=5, max=35),
                                              Unique(ForumPages.topic)])
-# private = BooleanField("Private")
     description = TextAreaField("Description")
     submit = SubmitField("Create")
 
@@ -73,9 +72,38 @@ class PostForm(FlaskForm):
     post = SubmitField("Post")
 
 
-class ResendConformationForm(FlaskForm, ModelForm):
+class ResendConfirmationForm(FlaskForm):
     email = StringField("Email",
                         validators=[DataRequired(), Regexp(metumail_validator,
                                     message="Please enter a valid Metu Mail.")]
                         )
     submit = SubmitField("Resend")
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError("There is no account with that email "
+                                  "you must register first!")
+
+
+class ForgetPasswordForm(FlaskForm):
+    email = StringField("Email",
+                        validators=[DataRequired(), Regexp(metumail_validator,
+                                    message="Please enter a valid Metu Mail.")]
+                        )
+    submit = SubmitField("Renew Password")
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError("There is no account with that "
+                                  "email you must register first!")
+
+
+class RenewPasswordForm(FlaskForm):
+    password = PasswordField("Password",
+                             validators=[DataRequired()])
+    confirm_password = PasswordField("Confirm Password",
+                                     validators=[DataRequired(),
+                                                 EqualTo("password")])
+    submit = SubmitField("Renew Password")
