@@ -7,3 +7,5 @@ hocam/site.db
 *.jpg
 *.json
 *.pdf
+eggs
+*.egg-info

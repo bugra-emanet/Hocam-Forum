@@ -12,12 +12,12 @@
     <ul class="pagination pagination-sm justify-content-end">
       {% if posts.has_prev%}
       <li class="page-item "><a area-label="Previous" class="page-link "
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
             aria-hidden="true">&laquo;</span>
           <span class="sr-only">Previous</span></a></li>
       {% else %}
       <li class="page-item disabled"><a area-label="Previous" class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
             aria-hidden="true">&laquo;</span>
           <span class="sr-only">Previous</span></a></li>
       {% endif %}
@@ -27,10 +27,10 @@
       {% if page_num%}
       {% if posts.page == page_num %}
       <li class="page-item active"><a class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
       {% else %}
       <li class="page-item"><a class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
       {% endif %}
 
 
@@ -44,12 +44,12 @@
 
       {% if posts.has_next%}
       <li class="page-item"><a aria-label="Previous" class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
             aria-hidden="true">&raquo;</span>
           <span class="sr-only">Next</span></a></li>
       {%else%}
       <li class="page-item disabled"><a aria-label="Next" class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
             aria-hidden="true">&raquo;</span>
           <span class="sr-only">Next</span></a></li>
       {%endif%}
@@ -87,7 +87,7 @@
 
 
       <div class="justify-content-start list-group list-group-horizontal-sm">
-        <a class="btn btn-sm btn-primary" href="{{url_for('editdescription', forumpage_id = forumpage.id)}}"
+        <a class="btn btn-sm btn-primary" href="{{url_for('forumpages.editdescription', forumpage_id = forumpage.id)}}"
           class="list-group-item ">
           Edit
         </a>
@@ -106,7 +106,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form action="{{url_for('delete_description', forumpage_id = forumpage.id)}}"
+                <form action="{{url_for('forumpages.delete_description', forumpage_id = forumpage.id)}}"
                   method="POST">
                   <input type="submit" class="btn btn-danger" value="Delete">
                 </form>
@@ -145,7 +145,7 @@
 
         <div class="justify-content-start list-group list-group-horizontal-sm">
           <a class="btn btn-sm btn-primary"
-            href="{{url_for('editpost',post_id = post.id, forumpage_id = forumpage.id)}}" class="list-group-item ">
+            href="{{url_for('posts.editpost',post_id = post.id, forumpage_id = forumpage.id)}}" class="list-group-item ">
             Edit
           </a>
           <button type="button" class="btn btn-sm btn-danger ml-2" data-toggle="modal" data-target="#deleteModal">
@@ -163,7 +163,7 @@
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <form action="{{url_for('delete_post', forumpage_id = post.forumpage ,post_id = post.id)}}"
+                  <form action="{{url_for('posts.delete_post', forumpage_id = post.forumpage ,post_id = post.id)}}"
                     method="POST">
                     <input type="submit" class="btn btn-danger" value="Delete">
                   </form>
@@ -221,12 +221,12 @@
     <ul class="pagination pagination-sm justify-content-end">
       {% if posts.has_prev%}
       <li class="page-item "><a area-label="Previous" class="page-link "
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+          href="{{url_for('.forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
             aria-hidden="true">&laquo;</span>
           <span class="sr-only">Previous</span></a></li>
       {% else %}
       <li class="page-item disabled"><a area-label="Previous" class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.prev_num)}}"><span
             aria-hidden="true">&laquo;</span>
           <span class="sr-only">Previous</span></a></li>
       {% endif %}
@@ -236,10 +236,10 @@
       {% if page_num%}
       {% if posts.page == page_num %}
       <li class="page-item active"><a class="page-link  "
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
       {% else %}
       <li class="page-item"><a class="page-link "
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=page_num)}}">{{page_num}}</a></li>
       {% endif %}
 
 
@@ -251,12 +251,12 @@
       {% endfor %}
       {% if posts.has_next %}
       <li class="page-item"><a aria-label="Next" class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
             aria-hidden="true">&raquo;</span>
           <span class="sr-only">Previous</span></a></li>
       {%else%}
       <li class="page-item disabled"><a aria-label="Next" class="page-link"
-          href="{{url_for('showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
+          href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id, page=posts.next_num)}}"><span
             aria-hidden="true">&raquo;</span>
           <span class="sr-only">Next</span></a></li>
       {%endif%}

@@ -18,7 +18,7 @@ class User(db.Model, UserMixin):
                            default="default.png")
     registered_on = db.Column(db.DateTime, nullable=False,
                               default=datetime.datetime.now(
-                                datetime.timezone.utc))
+                                  datetime.timezone.utc))
     admin = db.Column(db.Boolean, nullable=False, default=False)
     password = db.Column(db.String(60), nullable=False)
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
@@ -65,6 +65,3 @@ class Posts(db.Model):
 
     def __repr__(self):
         return f"Post ( {self.author.username}, {self.author.email})"
-
-
-db.create_all()

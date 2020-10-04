@@ -3,13 +3,13 @@
 
 <div style="max-height: 36em;" class="list-group overflow-auto">
   {% if current_user.is_authenticated and not current_user.confirmed%}
-  <a class="btn btn-basic btn-sm btn-outline-dark bg-blue"href="{{url_for('resend_confirmation')}}">Resend email confirmation link</a>
+  <a class="btn btn-basic btn-sm btn-outline-dark bg-blue"href="{{url_for('users.resend_confirmation')}}">Resend email confirmation link</a>
   {% endif%}
   {% if current_user.is_authenticated and current_user.confirmed%}
-  <a href="{{url_for('newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark sticky-top bg-blue"
+  <a href="{{url_for('forumpages.newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark sticky-top bg-blue"
     role="button">Create New Topic &#43;</a>
   {% else %}
-  <a href="{{url_for('newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark sticky-top disabled bg-blue"
+  <a href="{{url_for('forumpages.newforumpage')}}" class="btn btn-basic btn-sm btn-outline-dark sticky-top disabled bg-blue"
     role="button">Create New Topic &#43;</a>
   {% endif %}
  
@@ -22,7 +22,7 @@
   {% for forumpage in forumpages%}
 
 
-  <a href="{{url_for('showforumpage',forumpage_id=forumpage.id)}}"
+  <a href="{{url_for('forumpages.showforumpage',forumpage_id=forumpage.id)}}"
     class="list-group-item list-group-item-action"><h5>{{forumpage.topic}}</h5>
     <p  class="text-right text-basic">
       <small>Created by {{forumpage.creator.username}} at {{localizetime(forumpage.date_created)}}</small>
