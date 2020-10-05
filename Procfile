@@ -1,1 +1,1 @@
-web:gunicorn hocam:app
+web: gunicorn hocam:app
