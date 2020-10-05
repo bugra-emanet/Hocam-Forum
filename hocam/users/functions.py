@@ -44,9 +44,9 @@ def confirm_token(token, expiration=3600):
 
 def send_mail(from_email, to_email, template, subject):
 
-    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+    sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
     to_email = Email(to_email)
-    content = Content("html", render_template(template))
+    content = Content("html", template)
     mail = Mail(from_email, subject, to_email, content)
     response = sg.client.mail.send.post(request_body=mail.get())
     return response.status_code
