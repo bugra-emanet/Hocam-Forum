@@ -73,10 +73,11 @@ def signup():
                                    confirm_url=confirm_url)
         subject = "Please confirm your email"
         # send the mail with the token
-        send_mail(recipients=user.email,
+        send_mail(to_email=user.email,
                   subject=subject,
                   template=template,
-                  sender=current_app.config["MAIL_DEFAULT_SENDER"])
+                  from_email=current_app.config["MAIL_DEFAULT_SENDER"]
+                  )
         flash('A confirmation email has been sent via email.', 'success')
         # redirect  the newly registered user to the login page
         return redirect(url_for("users.login"))
@@ -153,10 +154,11 @@ def resend_confirmation():
                                    confirm_url=confirm_url)
         subject = "Please confirm your email"
         # sending the mail
-        send_mail(recipients=current_user.email,
+        send_mail(to_email=current_user.email,
                   subject=subject,
                   template=template,
-                  sender=current_app.config["MAIL_DEFAULT_SENDER"])
+                  from_email=current_app.config["MAIL_DEFAULT_SENDER"]
+                  )
         flash('A confirmation email has been sent via email.', 'success')
     return render_template("resendconfirmation.html", form=form,
                            title="resendconfirmation")
@@ -181,10 +183,11 @@ def forget_password():
                                    confirm_url=confirm_url)
         subject = "Hocam Password Reset"
         # sending the mail
-        send_mail(recipients=user.email,
+        send_mail(to_email=user.email,
                   subject=subject,
                   template=template,
-                  sender=users.config["MAIL_DEFAULT_SENDER"])
+                  from_email=current_app.config["MAIL_DEFAULT_SENDER"]
+                  )
         flash("Password reset email has been sent!", "info")
 
     return render_template("resetrequest.html", form=form,

@@ -8,4 +8,5 @@ hocam/site.db
 *.json
 *.pdf
 eggs
-*.egg-info
+*.egg-infosendgrid.env
+sendgrid.env
