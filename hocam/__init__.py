@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from hocam.config import Config
+from sqlalchemy.exc import OperationalError
 
 
 db = SQLAlchemy()
@@ -19,9 +20,9 @@ def create_app(config_class=Config):
     db.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    with app.app_context():
-        from hocam import models
-        db.create_all()
+    
+        
+        
 
     from hocam.users.routes import users
     from hocam.main.routes import main

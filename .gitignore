@@ -1,7 +1,6 @@
 venv/
 __pycache__
 .vscode
-hocam/site.db
 *.pyc
 *.png
 *.jpg
