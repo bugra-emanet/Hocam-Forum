@@ -3,11 +3,11 @@
 from PIL import Image
 import secrets
 import os
-import sendgrid
-from sendgrid.helpers.mail import Mail, Content, Email
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, To
 from itsdangerous import URLSafeTimedSerializer as Serializer
 from itsdangerous import SignatureExpired, BadSignature
-from flask import current_app, render_template
+from flask import current_app
 
 
 def save_picture(form_picture):
@@ -44,9 +44,15 @@ def confirm_token(token, expiration=3600):
 
 def send_mail(from_email, to_email, template, subject):
 
-    sg = sendgrid.SendGridAPIClient(api_key=os.environ.get('SENDGRID_API_KEY'))
-    to_email = Email(to_email)
-    content = Content("html", template)
-    mail = Mail(from_email, subject, to_email, content)
-    response = sg.client.mail.send.post(request_body=mail.get())
-    return response.status_code
+    from_email = Email(from_email)
+    to_email = To(to_email)
+    message = Mail(from_email=from_email, subject=subject,
+                   to_emails=to_email, html_content=template)
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(e.message)
